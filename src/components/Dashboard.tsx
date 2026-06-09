@@ -10,7 +10,7 @@ import {
 import { 
   Zap, Bus, Plane, ShoppingBag, Trash2, ShieldCheck, Plus, MessageSquare, 
   Heart, Sparkles, TrendingDown, RefreshCw, Layers, Radio, HelpCircle, 
-  CheckCircle2, AlertTriangle, ArrowUpRight, Award
+  CheckCircle2, AlertTriangle, ArrowUpRight, Award, FileDown
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -23,6 +23,7 @@ interface DashboardProps {
   onOpenCoach: () => void;
   onSelectProfile?: (profile: UserProfileObj) => void;
   onShowToast?: (message: string, type?: 'success' | 'info' | 'error') => void;
+  onDownloadReport?: () => void;
 }
 
 export default function Dashboard({ 
@@ -34,7 +35,8 @@ export default function Dashboard({
   setProfile,
   onOpenCoach,
   onSelectProfile,
-  onShowToast
+  onShowToast,
+  onDownloadReport
 }: DashboardProps) {
   // Calculations
   const breakdown = calculateEmissions(footprint);
@@ -691,6 +693,44 @@ export default function Dashboard({
           activeProfileName={profile.name}
           onShowToast={onShowToast}
         />
+
+        {/* Official PDF Statement Center */}
+        {onDownloadReport && (
+          <div id="dashboard-certified-statement-widget" className="bg-gradient-to-br from-emerald-950 via-slate-900 to-slate-950 text-white rounded-3xl p-6 border border-emerald-500/20 shadow-md relative overflow-hidden">
+            <div className="absolute right-0 top-0 -mr-10 -mt-10 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl"></div>
+            <div className="relative z-10 space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-emerald-500/15 text-emerald-400 rounded-lg flex items-center justify-center border border-emerald-500/30">
+                  <FileDown className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">Statement Center</h4>
+                  <p className="text-sm font-bold text-slate-100">Certified Impact Ledger</p>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Compile and download your verified sustainability statement containing current month Achievements, Badges earned, and secure digital Offset Certificates.
+              </p>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={onDownloadReport}
+                  className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition text-xs py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 cursor-pointer shadow-sm shadow-emerald-500/20"
+                  id="dashboard-btn-download-pdf-sidebar"
+                >
+                  <FileDown className="w-4 h-4 text-slate-900" />
+                  <span>Download Monthly Report</span>
+                </button>
+              </div>
+
+              <div className="text-[10px] text-slate-400 text-center font-mono bg-white/5 py-1 px-2 rounded">
+                Telemetry Stamp ID: CP-SECURE-NODE-JUNE
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Profile / Gamification Summary Card */}
         <div id="profile-status-block" className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 relative">

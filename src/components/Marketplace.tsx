@@ -8,14 +8,26 @@ interface MarketplaceProps {
   profile: UserProfile;
   setProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
   currentFootprintKg: number;
+  purchasedCert?: any | null;
+  setPurchasedCert?: (cert: any) => void;
 }
 
-export default function Marketplace({ profile, setProfile, currentFootprintKg }: MarketplaceProps) {
+export default function Marketplace({ 
+  profile, 
+  setProfile, 
+  currentFootprintKg,
+  purchasedCert: propPurchasedCert,
+  setPurchasedCert: propSetPurchasedCert
+}: MarketplaceProps) {
   const [projects, setProjects] = useState<OffsetProject[]>(initialOffsetProjects);
   const [selectedProject, setSelectedProject] = useState<OffsetProject | null>(initialOffsetProjects[0]);
   const [offsetAmountTons, setOffsetAmountTons] = useState(1.5);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [purchasedCert, setPurchasedCert] = useState<any | null>(null);
+  
+  // Local fallback if props not provided
+  const [localPurchasedCert, setLocalPurchasedCert] = useState<any | null>(null);
+  const purchasedCert = propPurchasedCert !== undefined ? propPurchasedCert : localPurchasedCert;
+  const setPurchasedCert = propSetPurchasedCert !== undefined ? propSetPurchasedCert : setLocalPurchasedCert;
 
   const currentFootprintTons = currentFootprintKg / 1000;
 

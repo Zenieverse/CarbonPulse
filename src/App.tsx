@@ -12,8 +12,10 @@ import ESGSuite from './components/ESGSuite';
 import MobileAppMockup from './components/MobileAppMockup';
 import AdminPanel from './components/AdminPanel';
 import InnovatorBadge, { UserProfileObj } from './components/InnovatorBadge';
+import ClimateJourney from './components/ClimateJourney';
 
-import { Leaf, LogOut, ArrowRight, Settings, Radio, Trophy, Trees, Award, HelpCircle, Bell, Smartphone, User, Menu, X } from 'lucide-react';
+import { Leaf, LogOut, ArrowRight, Settings, Radio, Trophy, Trees, Award, HelpCircle, Bell, Smartphone, User, Menu, X, Compass, Cpu, Sparkles, ShieldCheck, Activity, FileDown } from 'lucide-react';
+import { generateSustainReportPdf } from './utils/pdfGenerator';
 
 export default function App() {
   // Global States
@@ -31,9 +33,26 @@ export default function App() {
   
   const [footprint, setFootprint] = useState<CarbonFootprint>(defaultFootprint);
   const [feed, setFeed] = useState<ActivityFeedItem[]>(initialFeedItems);
-  const [activeView, setActiveView] = useState<'dashboard' | 'coach' | 'challenges' | 'marketplace' | 'esg' | 'mobile' | 'admin'>('dashboard');
+  const [activeView, setActiveView] = useState<'dashboard' | 'journey' | 'coach' | 'challenges' | 'marketplace' | 'esg' | 'mobile' | 'admin'>('journey');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
+  
+  // PDF & Offset state synchronization
+  const [purchasedCert, setPurchasedCert] = useState<any | null>(null);
+
+  const handleDownloadSustainReport = () => {
+    try {
+      generateSustainReportPdf({
+        profile,
+        footprint,
+        purchasedCert
+      });
+      triggerToast("Downloaded your Verified Sustainability Ledger & Achievements Summary (PDF)!", "success");
+    } catch (e) {
+      console.error(e);
+      triggerToast("Could not generate PDF summary. Please try again.", "error");
+    }
+  };
 
   const triggerToast = (message: string, type: 'success' | 'info' | 'error' = 'success') => {
     setToast({ message, type });
@@ -49,7 +68,10 @@ export default function App() {
   }, [toast]);
 
   // Transition helper from Landing to App
-  const handleEnterApp = (tier?: 'free' | 'premium' | 'business' | 'enterprise') => {
+  const handleEnterApp = (
+    tier?: 'free' | 'premium' | 'business' | 'enterprise',
+    targetView?: 'dashboard' | 'journey' | 'coach' | 'challenges' | 'marketplace' | 'esg' | 'mobile' | 'admin'
+  ) => {
     if (tier) {
       setProfile(prev => ({ ...prev, tier }));
       triggerToast(`Welcome to CarbonPulse! Logged into ${tier.toUpperCase()} module.`, "success");
@@ -57,6 +79,9 @@ export default function App() {
       triggerToast("Welcome to CarbonPulse!", "success");
     }
     setUserStatus('logged-in');
+    if (targetView) {
+      setActiveView(targetView);
+    }
   };
 
   const handleLogout = () => {
@@ -141,13 +166,14 @@ export default function App() {
         {/* Navigation links */}
         <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
           {[
-            { id: 'dashboard', label: 'Dashboard', icon: <Radio className="w-4 h-4" /> },
-            { id: 'coach', label: 'AI Coach', icon: <Award className="w-4 h-4" /> },
-            { id: 'challenges', label: 'Challenges', icon: <Trophy className="w-4 h-4" /> },
-            { id: 'marketplace', label: 'Offset Marketplace', icon: <Trees className="w-4 h-4" /> },
-            { id: 'esg', label: 'Enterprise ESG', icon: <HelpCircle className="w-4 h-4" /> },
-            { id: 'mobile', label: 'Mobile Client', icon: <Smartphone className="w-4 h-4" /> },
-            { id: 'admin', label: 'Admin Panel', icon: <Settings className="w-4 h-4" /> }
+            { id: 'dashboard', label: 'Carbon Footprint Engine', icon: <Cpu className="w-4 h-4 text-emerald-500" /> },
+            { id: 'journey', label: 'User Journey Flywheel', icon: <Compass className="w-4 h-4 text-sky-500" /> },
+            { id: 'coach', label: 'AI Sustainability Coach', icon: <Sparkles className="w-4 h-4 text-amber-500" /> },
+            { id: 'challenges', label: 'Gamification & Challenges', icon: <Trophy className="w-4 h-4 text-rose-500" /> },
+            { id: 'marketplace', label: 'Offset Marketplace', icon: <Trees className="w-4 h-4 text-green-500" /> },
+            { id: 'esg', label: 'Enterprise ESG Hub', icon: <Activity className="w-4 h-4 text-violet-500" /> },
+            { id: 'mobile', label: 'Automated Tracking Nodes', icon: <Radio className="w-4 h-4 text-indigo-500" /> },
+            { id: 'admin', label: 'Military Grade Security', icon: <ShieldCheck className="w-4 h-4 text-slate-500" /> }
           ].map(tab => {
             const isActive = activeView === tab.id;
             return (
@@ -228,13 +254,14 @@ export default function App() {
         {mobileMenuOpen && (
           <div className="mt-3.5 pt-3.5 border-t border-slate-100 flex flex-col gap-1">
             {[
-              { id: 'dashboard', label: '📊 Dashboard' },
-              { id: 'coach', label: '💬 AI Coach' },
-              { id: 'challenges', label: '🏆 Challenges' },
+              { id: 'dashboard', label: '🎛️ Carbon Footprint Engine' },
+              { id: 'journey', label: '🧭 User Journey Flywheel' },
+              { id: 'coach', label: '💬 AI Sustainability Coach' },
+              { id: 'challenges', label: '🏆 Gamification & Challenges' },
               { id: 'marketplace', label: '🌳 Offset Marketplace' },
-              { id: 'esg', label: '🏢 Enterprise ESG' },
-              { id: 'mobile', label: '📱 Mobile Client' },
-              { id: 'admin', label: '⚙️ Admin Panel' }
+              { id: 'esg', label: '🏢 Enterprise ESG Hub' },
+              { id: 'mobile', label: '📡 Automated Tracking Nodes' },
+              { id: 'admin', label: '🛡️ Military Grade Security' }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -290,6 +317,17 @@ export default function App() {
               </div>
             </div>
 
+            {/* Premium PDF Statement Download action node */}
+            <button
+              onClick={handleDownloadSustainReport}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500 px-4 py-2 rounded-xl transition text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer"
+              title="Download Custom Sustainability Report & Certificates (PDF)"
+              id="header-btn-download-pdf"
+            >
+              <FileDown className="w-4 h-4 text-emerald-100 animate-pulse" />
+              <span>Download Statement</span>
+            </button>
+
             <button
               onClick={handleLogout}
               className="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200/80 px-4 py-2 rounded-xl transition text-xs font-semibold flex items-center gap-1.5 shadow-2xs cursor-pointer"
@@ -310,6 +348,17 @@ export default function App() {
             transition={{ duration: 0.3 }}
             className="h-full"
           >
+            {activeView === 'journey' && (
+              <ClimateJourney 
+                profile={profile}
+                setProfile={setProfile}
+                footprint={footprint}
+                onAdjustFootprint={handleAdjustFootprint}
+                onShowToast={triggerToast}
+                onNavigateToView={(view) => setActiveView(view)}
+              />
+            )}
+
             {activeView === 'dashboard' && (
               <Dashboard 
                 footprint={footprint} 
@@ -321,6 +370,7 @@ export default function App() {
                 onOpenCoach={() => setActiveView('coach')}
                 onSelectProfile={handleSelectProfile}
                 onShowToast={triggerToast}
+                onDownloadReport={handleDownloadSustainReport}
               />
             )}
 
@@ -345,6 +395,8 @@ export default function App() {
                 profile={profile}
                 setProfile={setProfile}
                 currentFootprintKg={calculateEmissions(footprint).total}
+                purchasedCert={purchasedCert}
+                setPurchasedCert={setPurchasedCert}
               />
             )}
 

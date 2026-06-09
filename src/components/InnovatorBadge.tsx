@@ -39,7 +39,7 @@ export default function InnovatorBadge({ onSelectProfile, activeProfileName, onS
     levelName: "Carbon Warrior",
     isInnovator: true,
     badge: "ReFi Talents",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200" // Professional headshot representing Nga Nguyen
+    avatar: "NN"
   };
 
   const handleCopyLink = () => {
@@ -70,21 +70,12 @@ export default function InnovatorBadge({ onSelectProfile, activeProfileName, onS
           </span>
         </div>
 
-        {/* Card Body - Likeness of the certificate structure */}
+        {/* Card Body - Likeness of the certificate structure (Omitted image for stylized presentation) */}
         <div className="mt-4 flex items-center gap-3.5">
-          {/* Circular picture of Nga Nguyen */}
+          {/* Circular initials representation of Nga Nguyen */}
           <div className="relative">
-            <div className="w-14 h-14 rounded-full border-2 border-white/90 overflow-hidden bg-slate-200 shadow-inner flex items-center justify-center">
-              {/* Fallback avatar if unsplash fails, or nice depiction */}
-              <img 
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200" 
-                alt="Nga Nguyen" 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  // If block, draw short dark hair avatar silhouette
-                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200";
-                }}
-              />
+            <div className="w-14 h-14 rounded-full border-2 border-white/90 bg-gradient-to-br from-[#d97706] to-[#b45309] shadow-inner flex items-center justify-center text-white font-display font-semibold text-lg">
+              NN
             </div>
             {/* Open book icon absolute in top-left like the certificate */}
             <div className="absolute -top-1 -left-1 w-5 h-5 bg-[#d97706]/90 rounded-full border border-white flex items-center justify-center text-[8px] text-white font-bold" title="ReFi Matrix Code">
@@ -148,19 +139,12 @@ export default function InnovatorBadge({ onSelectProfile, activeProfileName, onS
                   </div>
                 </div>
 
-                {/* Center Content Matching Image */}
+                {/* Center Content Matching Image (Omitted image for stylized presentation) */}
                 <div className="flex flex-col items-center text-center mt-4">
-                  {/* Avatar Frame */}
-                  <div className="relative">
-                    <div className="w-32 h-32 rounded-full border-4 border-white/95 overflow-hidden shadow-xl bg-slate-300">
-                      <img 
-                        src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200" 
-                        alt="Nga Nguyen" 
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200";
-                        }}
-                      />
+                  {/* Stylized Initials Badge Frame instead of photograph */}
+                  <div className="relative font-bold">
+                    <div className="w-32 h-32 rounded-full border-4 border-white/95 bg-gradient-to-br from-[#d97706] to-[#b45309] shadow-xl flex items-center justify-center text-white font-display font-bold text-3xl">
+                      NN
                     </div>
                   </div>
 
