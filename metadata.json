@@ -1,0 +1,6 @@
+{
+  "name": "CarbonPulse",
+  "description": "Production-Ready Carbon Footprint Awareness & Sustainability Platform featuring a Footprint Engine, AI Coach, and ESG dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
