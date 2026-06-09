@@ -6,7 +6,7 @@
 
 This contains everything you need to run your app locally.
 
-View your app in AI Studio: https://ai.studio/apps/22bd55a5-3138-4974-93d5-d8aadda520d8
+View your app: https://carbonpulse-764082783379.us-west1.run.app
 
 ## Run Locally
 
