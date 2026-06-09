@@ -30,6 +30,9 @@ export interface UserProfile {
   streak: number;
   level: number;
   levelName: 'Eco Starter' | 'Green Explorer' | 'Climate Champion' | 'Carbon Warrior' | 'Net Zero Hero';
+  isInnovator?: boolean;
+  badge?: string;
+  avatar?: string;
 }
 
 export interface ActivityFeedItem {

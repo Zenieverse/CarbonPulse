@@ -11,6 +11,7 @@ import Marketplace from './components/Marketplace';
 import ESGSuite from './components/ESGSuite';
 import MobileAppMockup from './components/MobileAppMockup';
 import AdminPanel from './components/AdminPanel';
+import InnovatorBadge, { UserProfileObj } from './components/InnovatorBadge';
 
 import { Leaf, LogOut, ArrowRight, Settings, Radio, Trophy, Trees, Award, HelpCircle, Bell, Smartphone, User, Menu, X } from 'lucide-react';
 
@@ -32,17 +33,39 @@ export default function App() {
   const [feed, setFeed] = useState<ActivityFeedItem[]>(initialFeedItems);
   const [activeView, setActiveView] = useState<'dashboard' | 'coach' | 'challenges' | 'marketplace' | 'esg' | 'mobile' | 'admin'>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
+
+  const triggerToast = (message: string, type: 'success' | 'info' | 'error' = 'success') => {
+    setToast({ message, type });
+  };
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   // Transition helper from Landing to App
   const handleEnterApp = (tier?: 'free' | 'premium' | 'business' | 'enterprise') => {
     if (tier) {
       setProfile(prev => ({ ...prev, tier }));
+      triggerToast(`Welcome to CarbonPulse! Logged into ${tier.toUpperCase()} module.`, "success");
+    } else {
+      triggerToast("Welcome to CarbonPulse!", "success");
     }
     setUserStatus('logged-in');
   };
 
   const handleLogout = () => {
     setUserStatus('landing');
+  };
+
+  const handleSelectProfile = (newProfile: UserProfileObj) => {
+    setProfile(newProfile);
+    triggerToast(`Switched active profile to ReFi Innovator: ${newProfile.name}!`, "success");
   };
 
   // Adjusting simple fields inside footprint database 
@@ -75,8 +98,33 @@ export default function App() {
 
   // Render Inside shell
   return (
-    <div id="carbon-pulse-shell" className="bg-[#F8FAFC] min-h-screen text-slate-900 flex flex-col lg:flex-row font-sans">
+    <div id="carbon-pulse-shell" className="bg-[#F8FAFC] min-h-screen text-slate-900 flex flex-col lg:flex-row font-sans relative">
       
+      {/* Dynamic Alert Banner Toast */}
+      {toast && (
+        <div id="global-toast" className="fixed top-6 right-6 z-[999] pointer-events-none">
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            className={`shadow-lg p-3.5 px-4 rounded-xl flex items-center gap-2.5 border pointer-events-auto bg-white/95 backdrop-blur-md text-xs font-semibold ${
+              toast.type === 'error'
+                ? 'text-red-800 border-red-250 bg-red-50/95'
+                : toast.type === 'info'
+                ? 'text-sky-800 border-sky-200 bg-sky-50/95'
+                : 'text-emerald-800 border-emerald-200 bg-emerald-50/95'
+            }`}
+          >
+            <div className={`w-2 h-2 rounded-full ${
+              toast.type === 'error' ? 'bg-red-500' : toast.type === 'info' ? 'bg-sky-500' : 'bg-emerald-500'
+            } animate-pulse`} />
+            <span>{toast.message}</span>
+            <button onClick={() => setToast(null)} className="text-slate-400 hover:text-slate-700 p-0.5 ml-1 transition cursor-pointer">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </motion.div>
+        </div>
+      )}
+
       {/* LEFT SIDEBAR (Desktop) */}
       <aside className="w-64 bg-white border-r border-slate-200 lg:flex flex-col h-screen sticky top-0 hidden z-30">
         {/* Brand Header */}
@@ -118,6 +166,15 @@ export default function App() {
             );
           })}
         </nav>
+
+        {/* ReFi Talents Climate Innovator Spotlight */}
+        <div className="p-4 border-t border-slate-100 bg-slate-50/40">
+          <InnovatorBadge 
+            onSelectProfile={handleSelectProfile} 
+            activeProfileName={profile.name}
+            onShowToast={triggerToast}
+          />
+        </div>
 
         {/* Dynamic Streak Card at the bottom of the Sidebar */}
         <div className="p-4 border-t border-slate-100">
@@ -210,8 +267,13 @@ export default function App() {
         {/* Sleek Header Top Bar */}
         <header className="px-6 lg:px-8 pt-8 pb-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-800">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-800 flex items-center gap-2">
               Morning, {profile.name}!
+              {profile.isInnovator && (
+                <span className="bg-amber-500 text-slate-950 text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider relative -top-0.5">
+                  Innovator
+                </span>
+              )}
             </h1>
             <p className="text-slate-500 text-xs mt-0.5">
               Here's your live impact telemetry and verified carbon tracking score.
@@ -257,6 +319,8 @@ export default function App() {
                 profile={profile}
                 setProfile={setProfile}
                 onOpenCoach={() => setActiveView('coach')}
+                onSelectProfile={handleSelectProfile}
+                onShowToast={triggerToast}
               />
             )}
 
@@ -272,6 +336,7 @@ export default function App() {
               <Challenges 
                 profile={profile}
                 setProfile={setProfile}
+                onShowToast={triggerToast}
               />
             )}
 

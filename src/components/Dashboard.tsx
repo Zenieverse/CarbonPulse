@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { calculateEmissions, getCarbonScoreAndGrade, BENCHMARKS } from '../data/carbonData';
 import { CarbonFootprint, ActivityFeedItem, UserProfile } from '../types';
+import InnovatorBadge, { UserProfileObj } from './InnovatorBadge';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
@@ -20,6 +21,8 @@ interface DashboardProps {
   profile: UserProfile;
   setProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
   onOpenCoach: () => void;
+  onSelectProfile?: (profile: UserProfileObj) => void;
+  onShowToast?: (message: string, type?: 'success' | 'info' | 'error') => void;
 }
 
 export default function Dashboard({ 
@@ -29,7 +32,9 @@ export default function Dashboard({
   setFeed, 
   profile, 
   setProfile,
-  onOpenCoach
+  onOpenCoach,
+  onSelectProfile,
+  onShowToast
 }: DashboardProps) {
   // Calculations
   const breakdown = calculateEmissions(footprint);
@@ -679,6 +684,13 @@ export default function Dashboard({
 
       {/* Right Column: Gamification Profile Card + Social Daily Activity Feed */}
       <div className="space-y-8">
+        
+        {/* ReFi Talents Climate Innovator Spotlight (Interactive Badge) */}
+        <InnovatorBadge 
+          onSelectProfile={onSelectProfile} 
+          activeProfileName={profile.name}
+          onShowToast={onShowToast}
+        />
         
         {/* Profile / Gamification Summary Card */}
         <div id="profile-status-block" className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 relative">

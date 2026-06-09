@@ -7,9 +7,10 @@ import { Award, Zap, Trophy, ShieldAlert, Heart, Calendar, Flame, Users, CheckCi
 interface ChallengesProps {
   profile: UserProfile;
   setProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+  onShowToast?: (message: string, type?: 'success' | 'info' | 'error') => void;
 }
 
-export default function Challenges({ profile, setProfile }: ChallengesProps) {
+export default function Challenges({ profile, setProfile, onShowToast }: ChallengesProps) {
   const [challenges, setChallenges] = useState<Challenge[]>(initialChallenges);
   const [leaderboardTab, setLeaderboardTab] = useState<'friends' | 'city' | 'company' | 'global'>('friends');
 
@@ -49,7 +50,13 @@ export default function Challenges({ profile, setProfile }: ChallengesProps) {
   const handleJoinChallenge = (id: string) => {
     setChallenges(prev => prev.map(ch => {
       if (ch.id === id) {
-        return { ...ch, joined: !ch.joined, progress: ch.joined ? 0 : 10 };
+        const nextJoined = !ch.joined;
+        if (nextJoined) {
+          onShowToast?.(`Successfully accepted challenge "${ch.title}"!`, 'success');
+        } else {
+          onShowToast?.(`Withdrew from challenge "${ch.title}".`, 'info');
+        }
+        return { ...ch, joined: nextJoined, progress: nextJoined ? 10 : 0 };
       }
       return ch;
     }));
@@ -64,7 +71,7 @@ export default function Challenges({ profile, setProfile }: ChallengesProps) {
         if (isNowCompleted) {
           // Grant reward points & xp
           setTimeout(() => {
-            alert(`🎉 Congratulations! You have completed "${ch.title}"! +${ch.pointsReward} Green Points and +${ch.xpReward} XP awarded!`);
+            onShowToast?.(`🎉 Completed "${ch.title}"! Earned +${ch.pointsReward} GP and +${ch.xpReward} XP!`, 'success');
             setProfile(p => {
               const nextXp = p.xp + ch.xpReward;
               const nextLvl = Math.floor(nextXp / 1000) + 1;
@@ -78,6 +85,8 @@ export default function Challenges({ profile, setProfile }: ChallengesProps) {
               };
             });
           }, 200);
+        } else {
+          onShowToast?.(`Registered +20% progress on "${ch.title}"! Total: ${nextProg}%`, 'info');
         }
 
         return { ...ch, progress: nextProg };
